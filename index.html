@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Recovery Ward — Plant Intake & Dispatch Log</title>
+<title>Nursery Master Register — Intake & Movement Log</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -103,7 +103,7 @@
   .toolbar-actions{display:flex;gap:10px;}
 
   /* Card grid */
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
   .empty{
     text-align:center;padding:70px 20px;color:var(--ink-faint);
     border:1.5px dashed var(--line-strong);border-radius:var(--radius);
@@ -135,20 +135,32 @@
   .status-lost{background:var(--red-dim);color:#7A2622;}
 
   .rec-body{padding:13px 15px 15px;}
-  .rec-name{font-family:'Roboto Slab',serif;font-weight:600;font-size:17px;color:var(--moss);margin:0 0 3px;}
-  .rec-name .code{font-family:'Inter',sans-serif;font-weight:500;font-size:11px;color:var(--ink-faint);}
+  .rec-name{font-family:'Roboto Slab',serif;font-weight:600;font-size:16px;color:var(--moss);margin:0 0 5px;}
   .rec-meta{font-size:12.5px;color:var(--ink-soft);margin:0 0 8px;}
-  .rec-condition{
-    font-size:12.5px;color:var(--ink-soft);
-    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-    margin-bottom:10px;line-height:1.5;
+  
+  /* Multi-plant list box on card */
+  .plant-items-card{
+    background:var(--parchment-dim);border-radius:8px;padding:8px 10px;
+    margin-bottom:10px;display:flex;flex-direction:column;gap:4px;max-height:100px;overflow-y:auto;
   }
+  .plant-item-row{
+    display:flex;justify-content:space-between;align-items:center;font-size:12px;
+  }
+  .plant-item-row .pname{font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;}
+  .plant-item-row .pqty{background:var(--moss);color:#fff;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:10px;}
+
   .rec-foot{
     display:flex;justify-content:space-between;align-items:center;
     border-top:1px solid var(--line);padding-top:9px;font-size:11.5px;color:var(--ink-faint);
   }
 
   /* Order / Tracking Pill Badge */
+  .trk-banner{
+    background:var(--card);border:1.5px solid var(--moss-light);border-radius:10px;
+    padding:12px 16px;margin-bottom:18px;display:flex;justify-content:space-between;
+    align-items:center;box-shadow:0 2px 6px rgba(0,0,0,0.06);
+  }
+  .trk-banner.dsp{border-color:var(--bark-dim);}
   .trk-pill{
     display:inline-flex;align-items:center;gap:4px;
     font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;
@@ -161,7 +173,7 @@
   }
   .trk-copy-btn{
     background:var(--card);border:1px solid var(--line-strong);cursor:pointer;
-    font-size:11.5px;color:var(--moss);font-weight:600;padding:4px 10px;
+    font-size:11.5px;color:var(--moss);font-weight:600;padding:5px 12px;
     border-radius:6px;transition:all 0.15s;
   }
   .trk-copy-btn:hover{background:var(--leaf-dim);}
@@ -174,7 +186,7 @@
   }
   .overlay.open{display:flex;}
   .modal{
-    background:var(--parchment);border-radius:14px;max-width:640px;width:100%;
+    background:var(--parchment);border-radius:14px;max-width:680px;width:100%;
     box-shadow:0 20px 60px rgba(0,0,0,0.3);margin-bottom:30px;
   }
   .modal-head{
@@ -202,6 +214,31 @@
   .field textarea{resize:vertical;min-height:64px;font-family:'Inter',sans-serif;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 
+  /* Multi-plant entry section */
+  .multi-plants-box{
+    border:1.5px solid var(--line-strong);background:var(--card);
+    border-radius:10px;padding:14px;margin-bottom:18px;
+  }
+  .multi-header{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:12px;border-bottom:1px solid var(--line);padding-bottom:8px;
+  }
+  .multi-header h4{margin:0;font-size:13px;font-weight:700;color:var(--moss);text-transform:uppercase;}
+  .btn-add-row{
+    background:var(--leaf-dim);color:var(--moss);border:1px solid var(--moss-light);
+    font-size:12px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;
+  }
+  .btn-add-row:hover{background:var(--moss);color:#fff;}
+  .plant-row{
+    display:grid;grid-template-columns:2fr 1.2fr 80px 32px;gap:8px;align-items:center;
+    margin-bottom:10px;position:relative;
+  }
+  .btn-del-row{
+    background:none;border:none;color:var(--red);font-size:18px;cursor:pointer;
+    padding:0;line-height:1;text-align:center;
+  }
+  .btn-del-row:hover{color:#7A2622;}
+
   .photo-inputs{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .photo-slot{
     border:1.5px dashed var(--line-strong);border-radius:8px;padding:14px;
@@ -220,7 +257,7 @@
   .ph-icon{font-style:normal;font-size:12px;}
 
   .ac-list{
-    position:absolute;top:100%;left:0;right:0;z-index:20;
+    position:absolute;top:100%;left:0;right:0;z-index:30;
     background:var(--card);border:1px solid var(--line-strong);border-top:none;
     border-radius:0 0 8px 8px;max-height:220px;overflow-y:auto;
     box-shadow:0 6px 16px rgba(0,0,0,0.12);display:none;
@@ -277,6 +314,19 @@
   .dblock{margin-bottom:16px;}
   .dblock .l{font-size:11.5px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-faint);margin-bottom:5px;}
   .dblock .v{font-size:14.5px;color:var(--ink);line-height:1.6;white-space:pre-wrap;}
+
+  /* Detailed Table of Plant Line Items */
+  .items-table{
+    width:100%;border-collapse:collapse;margin-top:6px;background:var(--card);
+    border-radius:8px;overflow:hidden;border:1px solid var(--line-strong);
+  }
+  .items-table th{
+    background:var(--parchment-dim);text-align:left;font-size:11px;
+    text-transform:uppercase;color:var(--ink-soft);padding:8px 12px;
+  }
+  .items-table td{
+    padding:8px 12px;font-size:13px;border-top:1px solid var(--line);
+  }
 
   .history-list{display:flex;flex-direction:column;gap:0;}
   .history-item{
@@ -354,6 +404,7 @@
   @media (max-width:680px){
     .summary{grid-template-columns:repeat(2,1fr);}
     .row2,.photo-inputs,.detail-grid,.detail-photos{grid-template-columns:1fr;}
+    .plant-row{grid-template-columns:1fr 1fr;gap:6px;}
     .toolbar{flex-direction:column;align-items:stretch;}
     .search-box{max-width:none;}
   }
@@ -386,7 +437,7 @@
     <div class="filters" id="filters"></div>
     <div class="search-box">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Search by Order/Tracking No (e.g. DSP-2026-0001), plant, site..." oninput="handleSearch()">
+      <input type="text" id="searchInput" placeholder="Search Order # (REC-2026-0001), plant, site, ASM..." oninput="handleSearch()">
     </div>
     <div class="toolbar-actions">
       <button class="btn-export" onclick="exportToExcel()">Export to Excel</button>
@@ -411,39 +462,36 @@
       <button class="close-btn" onclick="closeModal()">&times;</button>
     </div>
     <div class="modal-body">
+      <!-- Auto-Generated Order Number Banner -->
+      <div class="field">
+        <label>Order / Tracking Number (Auto-Generated)</label>
+        <input type="text" id="f_trackingNo" readonly style="font-family:'Roboto Slab',serif;font-weight:700;color:var(--moss);background:var(--parchment-dim);">
+      </div>
+
       <div class="row2">
         <div class="field">
-          <label>Order / Tracking Number *</label>
-          <input type="text" id="f_trackingNo" placeholder="Auto-generated e.g. REC-2026-0001">
-        </div>
-        <div class="field">
-          <label>Date received</label>
+          <label>Date received *</label>
           <input type="date" id="f_dateReceived">
         </div>
-      </div>
-
-      <div class="row2">
         <div class="field" style="position:relative;">
-          <label>Plant name *</label>
-          <input type="text" id="f_name" placeholder="Start typing a plant name…" autocomplete="off" oninput="filterAutocomplete('name')" onfocus="filterAutocomplete('name')" onblur="hideAutocomplete('name')">
-          <div class="ac-list" id="ac_name"></div>
-        </div>
-        <div class="field">
-          <label>Plant SKU</label>
-          <input type="text" id="f_sku" placeholder="Auto-filled from plant name" readonly>
-        </div>
-      </div>
-
-      <div class="row2">
-        <div class="field" style="position:relative;">
-          <label>Client site</label>
-          <input type="text" id="f_site" placeholder="Start typing a site name…" autocomplete="off" oninput="filterAutocomplete('site')" onfocus="filterAutocomplete('site')" onblur="hideAutocomplete('site')">
+          <label>Client site *</label>
+          <input type="text" id="f_site" placeholder="Start typing a site name…" autocomplete="off" oninput="filterAutocompleteSite('f_site','f_siteCode','ac_site')" onfocus="filterAutocompleteSite('f_site','f_siteCode','ac_site')" onblur="hideAutocompleteSite('f_site','f_siteCode','ac_site')">
           <div class="ac-list" id="ac_site"></div>
         </div>
-        <div class="field">
-          <label>Site code</label>
-          <input type="text" id="f_siteCode" placeholder="Auto-filled from site name" readonly>
+      </div>
+
+      <div class="field">
+        <label>Site code</label>
+        <input type="text" id="f_siteCode" placeholder="Auto-filled from site name" readonly>
+      </div>
+
+      <!-- Multiple Plant Items Box -->
+      <div class="multi-plants-box">
+        <div class="multi-header">
+          <h4>🌿 Plants Included in Intake</h4>
+          <button type="button" class="btn-add-row" onclick="addPlantRow('recovery')">+ Add another plant</button>
         </div>
+        <div id="recoveryPlantRows"></div>
       </div>
 
       <div class="field">
@@ -547,37 +595,20 @@
       <button class="close-btn" onclick="closeDispatchModal()">&times;</button>
     </div>
     <div class="modal-body">
+      <!-- Auto-Generated Order Number Banner -->
+      <div class="field">
+        <label>Order / Tracking Number (Auto-Generated)</label>
+        <input type="text" id="df_trackingNo" readonly style="font-family:'Roboto Slab',serif;font-weight:700;color:var(--bark);background:var(--amber-dim);">
+      </div>
+
       <div class="row2">
-        <div class="field">
-          <label>Order / Tracking Number *</label>
-          <input type="text" id="df_trackingNo" placeholder="Auto-generated e.g. DSP-2026-0001">
-        </div>
         <div class="field">
           <label>Dispatch Date *</label>
           <input type="date" id="df_dispatchDate">
         </div>
-      </div>
-
-      <div class="row2">
-        <div class="field" style="position:relative;">
-          <label>Plant Name *</label>
-          <input type="text" id="df_name" placeholder="Start typing plant name..." autocomplete="off" oninput="filterDispatchAutocomplete('name')" onfocus="filterDispatchAutocomplete('name')" onblur="hideDispatchAutocomplete('name')">
-          <div class="ac-list" id="ac_dname"></div>
-        </div>
-        <div class="field">
-          <label>Plant SKU</label>
-          <input type="text" id="df_sku" placeholder="Auto-filled SKU" readonly>
-        </div>
-      </div>
-
-      <div class="row2">
-        <div class="field">
-          <label>Quantity Dispatched *</label>
-          <input type="number" id="df_qty" min="1" value="1" placeholder="e.g. 5">
-        </div>
         <div class="field" style="position:relative;">
           <label>Destination Client Site *</label>
-          <input type="text" id="df_site" placeholder="Start typing site name..." autocomplete="off" oninput="filterDispatchAutocomplete('site')" onfocus="filterDispatchAutocomplete('site')" onblur="hideDispatchAutocomplete('site')">
+          <input type="text" id="df_site" placeholder="Start typing site name..." autocomplete="off" oninput="filterAutocompleteSite('df_site','df_siteCode','ac_dsite')" onfocus="filterAutocompleteSite('df_site','df_siteCode','ac_dsite')" onblur="hideAutocompleteSite('df_site','df_siteCode','ac_dsite')">
           <div class="ac-list" id="ac_dsite"></div>
         </div>
       </div>
@@ -585,6 +616,15 @@
       <div class="field">
         <label>Site Code</label>
         <input type="text" id="df_siteCode" placeholder="Auto-filled site code" readonly>
+      </div>
+
+      <!-- Multiple Plant Items Box -->
+      <div class="multi-plants-box">
+        <div class="multi-header">
+          <h4>🚚 Plants Dispatched in Order</h4>
+          <button type="button" class="btn-add-row" onclick="addPlantRow('dispatch')">+ Add another plant</button>
+        </div>
+        <div id="dispatchPlantRows"></div>
       </div>
 
       <div class="row2">
@@ -688,9 +728,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-const PLANTS = [{"sku": "SKU16875", "name": "L16 ABELIA EDWARD GOUCHER 500-700"}, {"sku": "SKU16876", "name": "L16 ACORUS GRAMINEUS AUREOVARIEGATUS ACORUS 1200-1500"}, {"sku": "SKU16877", "name": "L16 ACORUS GRAMINEUS OGON 1200-1500"}, {"sku": "SKU16878", "name": "L16 ADENIUM OBESUM (DOUBLE DARK PINK GRP) PINK PEARL 1200-1500"}, {"sku": "SKU16879", "name": "L16 ADENIUM OBESUM (PASTEL PINKS GRP) BLUSH 1200-1500"}, {"sku": "SKU16880", "name": "L16 ADENIUM OBESUM (PASTEL PINKS GRP) CD 11 1200-1500"}, {"sku": "SKU16881", "name": "L16 ADENIUM OBESUM (PASTEL PINKS GRP) DL 42 X BKK 1 1200-1500"}, {"sku": "SKU16882", "name": "L16 ADENIUM OBESUM (PASTEL PINKS GRP) GOOD LUCK 1200-1500"}, {"sku": "SKU16883", "name": "L16 ADENIUM OBESUM (PASTEL PINKS GRP) PINK PEARL 1200-1500"}, {"sku": "SKU16884", "name": "L16 ADENIUM OBESUM DAR PINK PERFECTION 1200-1500"}, {"sku": "SKU16885", "name": "L16 ADENIUM OBESUM EXHIBITION DOUBLE PINK 1200-1500"}, {"sku": "SKU16886", "name": "L16 ADENIUM OBESUM WHITES 1200-1500"}];
+const PLANTS = [{"sku": "SKU16875", "name": "L16 ABELIA EDWARD GOUCHER 500-700"}, {"sku": "SKU16876", "name": "L16 ACORUS GRAMINEUS AUREOVARIEGATUS ACORUS 1200-1500"}, {"sku": "SKU16877", "name": "L16 ACORUS GRAMINEUS OGON 1200-1500"}, {"sku": "SKU16878", "name": "L16 ADENIUM OBESUM (DOUBLE DARK PINK GRP) PINK PEARL 1200-1500"}, {"sku": "SKU16879", "name": "L16 ADENIUM OBESUM (PASTEL PINKS GRP) BLUSH 1200-1500"}, {"sku": "SKU16880", "name": "L16 ADENIUM OBESUM (PASTEL PINKS GRP) CD 11 1200-1500"}, {"sku": "SKU16881", "name": "L16 ADENIUM OBESUM (PASTEL PINKS GRP) DL 42 X BKK 1 1200-1500"}, {"sku": "SKU16882", "name": "L16 ADENIUM OBESUM (PASTEL PINKS GRP) GOOD LUCK 1200-1500"}, {"sku": "SKU16883", "name": "L16 ADENIUM OBESUM (PASTEL PINKS GRP) PINK PEARL 1200-1500"}, {"sku": "SKU16884", "name": "L16 ADENIUM OBESUM DAR PINK PERFECTION 1200-1500"}, {"sku": "SKU16885", "name": "L16 ADENIUM OBESUM EXHIBITION DOUBLE PINK 1200-1500"}, {"sku": "SKU16886", "name": "L16 ADENIUM OBESUM WHITES 1200-1500"}, {"sku": "SKU17045", "name": "L16 NEEM TREE (AZADIRACHTA INDICA) 1200-1500"}, {"sku": "SKU16957", "name": "L16 ARECA PALM 1200-1500"}, {"sku": "SKU16887", "name": "L16 AGLAONEMA AMAZON SILVER 500-700"}];
 
-const SITES = [{"code": "SIT001", "name": "Standard Chartered Bank - Main Office"}, {"code": "SIT002", "name": "Microsoft India - Building 3"}, {"code": "SIT003", "name": "Amazon Development Center - Phase 2"}, {"code": "HYD004", "name": "Apple RMZ Spire"}];
+const SITES = [{"code": "SIT001", "name": "Standard Chartered Bank - Main Office"}, {"code": "SIT002", "name": "Microsoft India - Building 3"}, {"code": "SIT003", "name": "Amazon Development Center - Phase 2"}, {"code": "HYD004", "name": "Apple RMZ Spire"}, {"code": "HYD006", "name": "Google Omega C"}];
 
 const STATUS_LABELS = {
   intake: 'Intake',
@@ -819,119 +859,135 @@ function openAddModal(){
   }
 }
 
-/* Autocomplete logic */
-function filterAutocomplete(kind){
-  const input = document.getElementById(kind === 'name' ? 'f_name' : 'f_site');
-  const list = document.getElementById(kind === 'name' ? 'ac_name' : 'ac_site');
-  const q = input.value.trim().toLowerCase();
-  const source = kind === 'name' ? PLANTS : SITES;
-  let matches;
-  if(q === ''){
-    matches = source.slice(0, 30);
-  }else{
-    matches = source.filter(item => item.name.toLowerCase().includes(q)).slice(0, 30);
+/* Dynamic Multi-Plant Row Generator */
+let plantRowCounter = 0;
+
+function addPlantRow(type, item){
+  plantRowCounter++;
+  const rowId = `pr_${plantRowCounter}`;
+  const container = document.getElementById(type === 'recovery' ? 'recoveryPlantRows' : 'dispatchPlantRows');
+  
+  const div = document.createElement('div');
+  div.className = 'plant-row';
+  div.id = rowId;
+  div.innerHTML = `
+    <div style="position:relative;">
+      <input type="text" class="p-name" placeholder="Plant name..." value="${esc(item ? item.name : '')}" autocomplete="off" oninput="filterPlantRowAc('${rowId}')" onfocus="filterPlantRowAc('${rowId}')" onblur="hidePlantRowAc('${rowId}')">
+      <div class="ac-list" id="${rowId}_ac"></div>
+    </div>
+    <div>
+      <input type="text" class="p-sku" placeholder="SKU" value="${esc(item ? item.sku : '')}" readonly>
+    </div>
+    <div>
+      <input type="number" class="p-qty" min="1" value="${item ? (item.qty||1) : 1}" placeholder="Qty">
+    </div>
+    <button type="button" class="btn-del-row" onclick="removePlantRow('${rowId}')" title="Remove plant">&times;</button>
+  `;
+  container.appendChild(div);
+}
+
+function removePlantRow(rowId){
+  const el = document.getElementById(rowId);
+  if(el){
+    const container = el.parentElement;
+    if(container.children.length > 1){
+      el.remove();
+    } else {
+      alert('At least one plant item is required in a record.');
+    }
   }
+}
+
+function getPlantItemsFromModal(type){
+  const container = document.getElementById(type === 'recovery' ? 'recoveryPlantRows' : 'dispatchPlantRows');
+  const rows = container.querySelectorAll('.plant-row');
+  const items = [];
+  rows.forEach(r => {
+    const name = r.querySelector('.p-name').value.trim();
+    const sku = r.querySelector('.p-sku').value.trim();
+    const qty = parseInt(r.querySelector('.p-qty').value, 10) || 1;
+    if(name){
+      items.push({name, sku, qty});
+    }
+  });
+  return items;
+}
+
+/* Plant Row Autocomplete */
+function filterPlantRowAc(rowId){
+  const row = document.getElementById(rowId);
+  if(!row) return;
+  const input = row.querySelector('.p-name');
+  const list = row.querySelector('.ac-list');
+  const q = input.value.trim().toLowerCase();
+  
+  let matches = q === '' ? PLANTS.slice(0, 30) : PLANTS.filter(p => p.name.toLowerCase().includes(q)).slice(0, 30);
   if(matches.length === 0){
-    list.innerHTML = '<div class="ac-empty">No match found. You can still type a custom name.</div>';
-  }else if(kind === 'name'){
+    list.innerHTML = '<div class="ac-empty">No match. You can type any custom name.</div>';
+  } else {
     list.innerHTML = matches.map(p =>
-      `<div class="ac-item" onmousedown="selectPlant('${escJs(p.sku)}','${escJs(p.name)}')">${esc(p.name)}<span class="code">${esc(p.sku)}</span></div>`
-    ).join('');
-  }else{
-    list.innerHTML = matches.map(s =>
-      `<div class="ac-item" onmousedown="selectSite('${escJs(s.code)}','${escJs(s.name)}')">${esc(s.name)}<span class="code">${esc(s.code)}</span></div>`
+      `<div class="ac-item" onmousedown="selectPlantRowItem('${rowId}','${escJs(p.sku)}','${escJs(p.name)}')">${esc(p.name)}<span class="code">${esc(p.sku)}</span></div>`
     ).join('');
   }
   list.classList.add('show');
 }
 
-function hideAutocomplete(kind){
+function hidePlantRowAc(rowId){
   setTimeout(() => {
-    document.getElementById(kind === 'name' ? 'ac_name' : 'ac_site').classList.remove('show');
-    if(kind === 'name'){
-      const val = document.getElementById('f_name').value.trim().toLowerCase();
-      if(val && !document.getElementById('f_sku').value){
-        const match = PLANTS.find(p => p.name.toLowerCase() === val);
-        if(match) document.getElementById('f_sku').value = match.sku;
-      }
-    }else{
-      const val = document.getElementById('f_site').value.trim().toLowerCase();
-      if(val && !document.getElementById('f_siteCode').value){
-        const match = SITES.find(s => s.name.toLowerCase() === val);
-        if(match) document.getElementById('f_siteCode').value = match.code;
-      }
+    const row = document.getElementById(rowId);
+    if(!row) return;
+    const list = row.querySelector('.ac-list');
+    if(list) list.classList.remove('show');
+    const input = row.querySelector('.p-name');
+    const skuInput = row.querySelector('.p-sku');
+    const val = input.value.trim().toLowerCase();
+    if(val && !skuInput.value){
+      const match = PLANTS.find(p => p.name.toLowerCase() === val);
+      if(match) skuInput.value = match.sku;
     }
   }, 120);
 }
 
-function selectPlant(sku, name){
-  document.getElementById('f_name').value = name;
-  document.getElementById('f_sku').value = sku;
-  document.getElementById('ac_name').classList.remove('show');
-}
-
-function selectSite(code, name){
-  document.getElementById('f_site').value = name;
-  document.getElementById('f_siteCode').value = code;
-  document.getElementById('ac_site').classList.remove('show');
-}
-
-/* Dispatch Autocomplete */
-function filterDispatchAutocomplete(kind){
-  const input = document.getElementById(kind === 'name' ? 'df_name' : 'df_site');
-  const list = document.getElementById(kind === 'name' ? 'ac_dname' : 'ac_dsite');
-  const q = input.value.trim().toLowerCase();
-  const source = kind === 'name' ? PLANTS : SITES;
-  let matches;
-  if(q === ''){
-    matches = source.slice(0, 30);
-  }else{
-    matches = source.filter(item => item.name.toLowerCase().includes(q)).slice(0, 30);
+function selectPlantRowItem(rowId, sku, name){
+  const row = document.getElementById(rowId);
+  if(row){
+    row.querySelector('.p-name').value = name;
+    row.querySelector('.p-sku').value = sku;
+    row.querySelector('.ac-list').classList.remove('show');
   }
+}
+
+/* Site Autocomplete helper */
+function filterAutocompleteSite(inputId, codeId, acId){
+  const input = document.getElementById(inputId);
+  const list = document.getElementById(acId);
+  const q = input.value.trim().toLowerCase();
+  let matches = q === '' ? SITES.slice(0, 30) : SITES.filter(s => s.name.toLowerCase().includes(q)).slice(0, 30);
   if(matches.length === 0){
-    list.innerHTML = '<div class="ac-empty">No match found. You can still type a custom name.</div>';
-  }else if(kind === 'name'){
-    list.innerHTML = matches.map(p =>
-      `<div class="ac-item" onmousedown="selectDispatchPlant('${escJs(p.sku)}','${escJs(p.name)}')">${esc(p.name)}<span class="code">${esc(p.sku)}</span></div>`
-    ).join('');
-  }else{
+    list.innerHTML = '<div class="ac-empty">No match. You can type any custom site name.</div>';
+  } else {
     list.innerHTML = matches.map(s =>
-      `<div class="ac-item" onmousedown="selectDispatchSite('${escJs(s.code)}','${escJs(s.name)}')">${esc(s.name)}<span class="code">${esc(s.code)}</span></div>`
+      `<div class="ac-item" onmousedown="selectSiteItem('${inputId}','${codeId}','${acId}','${escJs(s.code)}','${escJs(s.name)}')">${esc(s.name)}<span class="code">${esc(s.code)}</span></div>`
     ).join('');
   }
   list.classList.add('show');
 }
 
-function hideDispatchAutocomplete(kind){
+function hideAutocompleteSite(inputId, codeId, acId){
   setTimeout(() => {
-    const listEl = document.getElementById(kind === 'name' ? 'ac_dname' : 'ac_dsite');
-    if(listEl) listEl.classList.remove('show');
-    if(kind === 'name'){
-      const val = document.getElementById('df_name').value.trim().toLowerCase();
-      if(val && !document.getElementById('df_sku').value){
-        const match = PLANTS.find(p => p.name.toLowerCase() === val);
-        if(match) document.getElementById('df_sku').value = match.sku;
-      }
-    }else{
-      const val = document.getElementById('df_site').value.trim().toLowerCase();
-      if(val && !document.getElementById('df_siteCode').value){
-        const match = SITES.find(s => s.name.toLowerCase() === val);
-        if(match) document.getElementById('df_siteCode').value = match.code;
-      }
+    document.getElementById(acId).classList.remove('show');
+    const val = document.getElementById(inputId).value.trim().toLowerCase();
+    if(val && !document.getElementById(codeId).value){
+      const match = SITES.find(s => s.name.toLowerCase() === val);
+      if(match) document.getElementById(codeId).value = match.code;
     }
   }, 120);
 }
 
-function selectDispatchPlant(sku, name){
-  document.getElementById('df_name').value = name;
-  document.getElementById('df_sku').value = sku;
-  document.getElementById('ac_dname').classList.remove('show');
-}
-
-function selectDispatchSite(code, name){
-  document.getElementById('df_site').value = name;
-  document.getElementById('df_siteCode').value = code;
-  document.getElementById('ac_dsite').classList.remove('show');
+function selectSiteItem(inputId, codeId, acId, code, name){
+  document.getElementById(inputId).value = name;
+  document.getElementById(codeId).value = code;
+  document.getElementById(acId).classList.remove('show');
 }
 
 function escJs(s){
@@ -952,6 +1008,9 @@ async function loadRecords(){
             parsed.trackingNo = generateTrackingNo('REC', loaded.length);
             await persist(parsed);
           }
+          if(!parsed.items){
+            parsed.items = [{ name: parsed.name || 'Plant', sku: parsed.sku || '', qty: 1 }];
+          }
           loaded.push(parsed);
         }
       }catch(e){ console.error('Failed to load recovery record', keys[i], e); }
@@ -970,6 +1029,9 @@ async function loadRecords(){
           if(!parsed.trackingNo){
             parsed.trackingNo = generateTrackingNo('DSP', loadedD.length);
             await persistDispatch(parsed);
+          }
+          if(!parsed.items){
+            parsed.items = [{ name: parsed.name || 'Plant', sku: parsed.sku || '', qty: parsed.qty || 1 }];
           }
           loadedD.push(parsed);
         }
@@ -1014,7 +1076,7 @@ function renderSummary(){
     records.forEach(r => { if(counts[r.status] !== undefined) counts[r.status]++; });
     const total = records.length;
     el.innerHTML = `
-      <div class="stat"><div class="n">${total}</div><div class="l">Total intake</div></div>
+      <div class="stat"><div class="n">${total}</div><div class="l">Total intakes</div></div>
       <div class="stat"><div class="n">${counts.treatment + counts.recovering}</div><div class="l">Active treatment</div></div>
       <div class="stat"><div class="n">${counts.revived}</div><div class="l">Revived</div></div>
       <div class="stat"><div class="n">${counts.lost}</div><div class="l">Lost</div></div>
@@ -1025,7 +1087,8 @@ function renderSummary(){
     let totalPlants = 0;
     dispatchRecords.forEach(r => {
       if(counts[r.status] !== undefined) counts[r.status]++;
-      totalPlants += (parseInt(r.qty, 10) || 1);
+      const items = r.items || [{qty: r.qty || 1}];
+      items.forEach(it => { totalPlants += (parseInt(it.qty, 10) || 1); });
     });
     const totalShipments = dispatchRecords.length;
     const uniqueSites = new Set(dispatchRecords.map(r => r.site).filter(Boolean)).size;
@@ -1077,14 +1140,15 @@ function renderGrid(){
   if(currentTab === 'recovery'){
     let list = activeFilter === 'all' ? records : records.filter(r => r.status === activeFilter);
     if(searchQuery){
-      list = list.filter(r =>
-        (r.trackingNo||'').toLowerCase().includes(searchQuery) ||
-        (r.name||'').toLowerCase().includes(searchQuery) ||
-        (r.sku||'').toLowerCase().includes(searchQuery) ||
-        (r.site||'').toLowerCase().includes(searchQuery) ||
-        (r.siteCode||'').toLowerCase().includes(searchQuery) ||
-        (r.personName||'').toLowerCase().includes(searchQuery)
-      );
+      list = list.filter(r => {
+        const itemsText = (r.items || []).map(i => i.name + ' ' + i.sku).join(' ');
+        return (r.trackingNo||'').toLowerCase().includes(searchQuery) ||
+          itemsText.toLowerCase().includes(searchQuery) ||
+          (r.name||'').toLowerCase().includes(searchQuery) ||
+          (r.site||'').toLowerCase().includes(searchQuery) ||
+          (r.siteCode||'').toLowerCase().includes(searchQuery) ||
+          (r.personName||'').toLowerCase().includes(searchQuery);
+      });
     }
     if(list.length === 0){
       grid.style.display = 'none';
@@ -1097,6 +1161,7 @@ function renderGrid(){
     empty.style.display = 'none';
     grid.innerHTML = list.map((r, i) => {
       const trk = r.trackingNo || generateTrackingNo('REC', i);
+      const items = r.items || [{name: r.name, sku: r.sku, qty: 1}];
       return `
         <div class="rec-card" onclick="openDetail('${r.id}')">
           <div class="rec-photo">
@@ -1104,9 +1169,16 @@ function renderGrid(){
             <span class="status-tag status-${r.status}">${STATUS_LABELS[r.status] || r.status}</span>
           </div>
           <div class="rec-body">
-            <div class="trk-pill">🔖 Order # ${esc(trk)}</div>
-            <p class="rec-name">${esc(r.name) || 'Unnamed plant'}${r.sku ? ` <span class="code">${esc(r.sku)}</span>` : ''}</p>
-            <p class="rec-meta">📍 ${esc(r.site) || 'Unknown site'}${r.siteCode ? ` (${esc(r.siteCode)})` : ''}</p>
+            <div class="trk-pill">🏷️ Order # ${esc(trk)}</div>
+            <p class="rec-name">📍 ${esc(r.site) || 'Unknown site'} ${r.siteCode ? `(${esc(r.siteCode)})` : ''}</p>
+            <div class="plant-items-card">
+              ${items.map(it => `
+                <div class="plant-item-row">
+                  <span class="pname" title="${esc(it.name)}">🌿 ${esc(it.name)}</span>
+                  <span class="pqty">Qty: ${it.qty||1}</span>
+                </div>
+              `).join('')}
+            </div>
             <p class="rec-condition">${esc(r.condition) || 'No condition notes'}</p>
             <div class="rec-foot">
               <span>Received ${r.dateReceived ? formatDate(r.dateReceived) : '—'}</span>
@@ -1120,16 +1192,17 @@ function renderGrid(){
     // Dispatch grid
     let list = activeDispatchFilter === 'all' ? dispatchRecords : dispatchRecords.filter(r => r.status === activeDispatchFilter);
     if(searchQuery){
-      list = list.filter(r =>
-        (r.trackingNo||'').toLowerCase().includes(searchQuery) ||
-        (r.name||'').toLowerCase().includes(searchQuery) ||
-        (r.sku||'').toLowerCase().includes(searchQuery) ||
-        (r.site||'').toLowerCase().includes(searchQuery) ||
-        (r.siteCode||'').toLowerCase().includes(searchQuery) ||
-        (r.supervisor||'').toLowerCase().includes(searchQuery) ||
-        (r.asm||'').toLowerCase().includes(searchQuery) ||
-        (r.dispatchedBy||'').toLowerCase().includes(searchQuery)
-      );
+      list = list.filter(r => {
+        const itemsText = (r.items || []).map(i => i.name + ' ' + i.sku).join(' ');
+        return (r.trackingNo||'').toLowerCase().includes(searchQuery) ||
+          itemsText.toLowerCase().includes(searchQuery) ||
+          (r.name||'').toLowerCase().includes(searchQuery) ||
+          (r.site||'').toLowerCase().includes(searchQuery) ||
+          (r.siteCode||'').toLowerCase().includes(searchQuery) ||
+          (r.supervisor||'').toLowerCase().includes(searchQuery) ||
+          (r.asm||'').toLowerCase().includes(searchQuery) ||
+          (r.dispatchedBy||'').toLowerCase().includes(searchQuery);
+      });
     }
     if(list.length === 0){
       grid.style.display = 'none';
@@ -1142,6 +1215,7 @@ function renderGrid(){
     empty.style.display = 'none';
     grid.innerHTML = list.map((r, i) => {
       const trk = r.trackingNo || generateTrackingNo('DSP', i);
+      const items = r.items || [{name: r.name, sku: r.sku, qty: r.qty||1}];
       return `
         <div class="rec-card" onclick="openDispatchDetail('${r.id}')">
           <div class="rec-photo">
@@ -1150,11 +1224,15 @@ function renderGrid(){
           </div>
           <div class="rec-body">
             <div class="trk-pill dsp">🚚 Order # ${esc(trk)}</div>
-            <p class="rec-name">
-              ${esc(r.name) || 'Unnamed plant'}
-              <span class="qty-pill">Qty: ${r.qty || 1}</span>
-            </p>
-            <p class="rec-meta">📍 <strong>${esc(r.site) || 'Unknown site'}</strong> ${r.siteCode ? `(${esc(r.siteCode)})` : ''}</p>
+            <p class="rec-name">📍 <strong>${esc(r.site) || 'Unknown site'}</strong> ${r.siteCode ? `(${esc(r.siteCode)})` : ''}</p>
+            <div class="plant-items-card">
+              ${items.map(it => `
+                <div class="plant-item-row">
+                  <span class="pname" title="${esc(it.name)}">🌿 ${esc(it.name)}</span>
+                  <span class="pqty">Qty: ${it.qty||1}</span>
+                </div>
+              `).join('')}
+            </div>
             <div class="dispatch-meta-box">
               <div class="dispatch-row-info">
                 <span class="lbl">Supervisor:</span>
@@ -1188,9 +1266,10 @@ function openModal(record){
   editingId = record ? record.id : null;
   document.getElementById('modalTitle').textContent = record ? 'Edit record' : 'New intake';
   document.getElementById('deleteBtn').style.visibility = record ? 'visible' : 'hidden';
-  document.getElementById('f_trackingNo').value = record ? (record.trackingNo || generateTrackingNo('REC', records.length)) : generateTrackingNo('REC', records.length);
-  document.getElementById('f_name').value = record ? record.name : '';
-  document.getElementById('f_sku').value = record ? (record.sku || '') : '';
+
+  const autoTrk = record ? (record.trackingNo || generateTrackingNo('REC', records.length)) : generateTrackingNo('REC', records.length);
+  document.getElementById('f_trackingNo').value = autoTrk;
+
   document.getElementById('f_dateReceived').value = record ? record.dateReceived : new Date().toISOString().slice(0,10);
   document.getElementById('f_site').value = record ? record.site : '';
   document.getElementById('f_siteCode').value = record ? (record.siteCode || '') : '';
@@ -1201,12 +1280,19 @@ function openModal(record){
   document.getElementById('f_empId').value = record ? (record.empId || '') : '';
   document.getElementById('f_notes').value = record ? (record.notes || '') : '';
 
+  // Setup plant line items
+  const container = document.getElementById('recoveryPlantRows');
+  container.innerHTML = '';
+  const items = record ? (record.items || [{name: record.name, sku: record.sku, qty: 1}]) : [{name:'', sku:'', qty:1}];
+  items.forEach(it => addPlantRow('recovery', it));
+
   const beforeImg = document.getElementById('preview_before');
   const afterImg = document.getElementById('preview_after');
   if(record && record.photoBefore){ beforeImg.src = record.photoBefore; beforeImg.style.display='block'; }
   else { beforeImg.style.display='none'; }
   if(record && record.photoAfter){ afterImg.src = record.photoAfter; afterImg.style.display='block'; }
   else { afterImg.style.display='none'; }
+
   document.getElementById('f_photoBefore_cam').value = '';
   document.getElementById('f_photoBefore_file').value = '';
   document.getElementById('f_photoAfter_cam').value = '';
@@ -1228,11 +1314,18 @@ function pickStatus(status){
 }
 
 async function saveRecord(){
-  const name = document.getElementById('f_name').value.trim();
-  if(!name){
-    alert('Enter a plant name before saving.');
+  const site = document.getElementById('f_site').value.trim();
+  const items = getPlantItemsFromModal('recovery');
+  
+  if(!site){
+    alert('Please enter a client site.');
     return;
   }
+  if(items.length === 0){
+    alert('Please add at least one plant item.');
+    return;
+  }
+
   const beforeImg = document.getElementById('preview_before');
   const afterImg = document.getElementById('preview_after');
 
@@ -1248,11 +1341,12 @@ async function saveRecord(){
   const rec = {
     id: editingId || uid('plant'),
     trackingNo: document.getElementById('f_trackingNo').value.trim() || generateTrackingNo('REC', records.length),
-    name,
-    sku: document.getElementById('f_sku').value.trim(),
-    dateReceived: document.getElementById('f_dateReceived').value,
-    site: document.getElementById('f_site').value.trim(),
+    site,
     siteCode: document.getElementById('f_siteCode').value.trim(),
+    dateReceived: document.getElementById('f_dateReceived').value,
+    items,
+    name: items[0].name, // Backward compatibility
+    sku: items[0].sku,
     condition: document.getElementById('f_condition').value.trim(),
     action: document.getElementById('f_action').value.trim(),
     dateAction: document.getElementById('f_dateAction').value,
@@ -1308,7 +1402,9 @@ function openDetail(id){
   const trk = r.trackingNo || generateTrackingNo('REC', 0);
   if(!r.trackingNo){ r.trackingNo = trk; persist(r); }
 
-  document.getElementById('detailTitle').textContent = r.name || 'Unnamed plant';
+  const items = r.items || [{name: r.name, sku: r.sku, qty: 1}];
+
+  document.getElementById('detailTitle').textContent = `Recovery Intake (${items.length} Plant Types)`;
 
   const customActionEl = document.getElementById('detailCustomAction');
   customActionEl.innerHTML = `
@@ -1318,7 +1414,7 @@ function openDetail(id){
   `;
 
   document.getElementById('detailBody').innerHTML = `
-    <div style="background:var(--card);border:1.5px solid var(--moss-light);border-radius:10px;padding:12px 16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+    <div class="trk-banner">
       <div>
         <div style="font-size:11px;color:var(--ink-faint);text-transform:uppercase;font-weight:700;letter-spacing:0.05em;">Order / Tracking Number</div>
         <div style="font-family:'Roboto Slab',serif;font-size:18px;font-weight:700;color:var(--moss);margin-top:2px;">${esc(trk)}</div>
@@ -1334,13 +1430,34 @@ function openDetail(id){
       <span class="status-tag status-${r.status}" style="position:static;display:inline-block;transform:none;">${STATUS_LABELS[r.status] || r.status}</span>
     </div>
     <div class="detail-grid">
-      <div class="dfield"><div class="l">Plant SKU</div><div class="v">${esc(r.sku) || '—'}</div></div>
-      <div class="dfield"><div class="l">Client site</div><div class="v">${esc(r.site) || '—'}${r.siteCode ? ' ('+esc(r.siteCode)+')' : ''}</div></div>
+      <div class="dfield"><div class="l">Client site</div><div class="v"><strong>${esc(r.site) || '—'}</strong> ${r.siteCode ? ' ('+esc(r.siteCode)+')' : ''}</div></div>
       <div class="dfield"><div class="l">Date received</div><div class="v">${r.dateReceived ? formatDate(r.dateReceived) : '—'}</div></div>
       <div class="dfield"><div class="l">Action started</div><div class="v">${r.dateAction ? formatDate(r.dateAction) : '—'}</div></div>
-      <div class="dfield"><div class="l">Nursery person</div><div class="v">${esc(r.personName) || '—'}</div></div>
-      <div class="dfield"><div class="l">Employee ID</div><div class="v">${esc(r.empId) || '—'}</div></div>
+      <div class="dfield"><div class="l">Nursery person</div><div class="v">${esc(r.personName) || '—'} ${r.empId ? '('+esc(r.empId)+')' : ''}</div></div>
     </div>
+
+    <div class="dblock">
+      <div class="l">Plants List in Order</div>
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Plant Name</th>
+            <th>SKU</th>
+            <th>Qty</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map(it => `
+            <tr>
+              <td><strong>${esc(it.name)}</strong></td>
+              <td>${esc(it.sku || '—')}</td>
+              <td><strong>${it.qty || 1}</strong></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
     <div class="dblock"><div class="l">Condition on arrival</div><div class="v">${esc(r.condition) || '—'}</div></div>
     <div class="dblock"><div class="l">Recovery action</div><div class="v">${esc(r.action) || '—'}</div></div>
     ${r.notes ? `<div class="dblock"><div class="l">Notes</div><div class="v">${esc(r.notes)}</div></div>` : ''}
@@ -1374,12 +1491,11 @@ function dispatchDirectFromRecovery(recId){
   const r = records.find(x => x.id === recId);
   closeDetail();
   switchTab('dispatch');
+  const items = r ? (r.items || [{name: r.name, sku: r.sku, qty: 1}]) : [];
   openDispatchModal({
-    name: r ? r.name : '',
-    sku: r ? r.sku : '',
     site: r ? r.site : '',
     siteCode: r ? r.siteCode : '',
-    qty: 1
+    items: items
   });
 }
 
@@ -1390,10 +1506,9 @@ function openDispatchModal(prefill){
   document.getElementById('dispatchModalTitle').textContent = record ? 'Edit Outward Movement' : 'New Outward Plant Movement';
   document.getElementById('ddeleteBtn').style.visibility = record ? 'visible' : 'hidden';
 
-  document.getElementById('df_trackingNo').value = record ? (record.trackingNo || generateTrackingNo('DSP', dispatchRecords.length)) : generateTrackingNo('DSP', dispatchRecords.length);
-  document.getElementById('df_name').value = record ? record.name : (prefill ? prefill.name : '');
-  document.getElementById('df_sku').value = record ? (record.sku || '') : (prefill ? prefill.sku || '' : '');
-  document.getElementById('df_qty').value = record ? (record.qty || 1) : (prefill ? prefill.qty || 1 : 1);
+  const autoTrk = record ? (record.trackingNo || generateTrackingNo('DSP', dispatchRecords.length)) : generateTrackingNo('DSP', dispatchRecords.length);
+  document.getElementById('df_trackingNo').value = autoTrk;
+
   document.getElementById('df_dispatchDate').value = record ? record.dispatchDate : new Date().toISOString().slice(0,10);
   document.getElementById('df_site').value = record ? record.site : (prefill ? prefill.site || '' : '');
   document.getElementById('df_siteCode').value = record ? (record.siteCode || '') : (prefill ? prefill.siteCode || '' : '');
@@ -1404,6 +1519,12 @@ function openDispatchModal(prefill){
   document.getElementById('df_dispatchedBy').value = record ? (record.dispatchedBy || '') : '';
   document.getElementById('df_vehicleNo').value = record ? (record.vehicleNo || '') : '';
   document.getElementById('df_notes').value = record ? (record.notes || '') : '';
+
+  // Setup plant line items
+  const container = document.getElementById('dispatchPlantRows');
+  container.innerHTML = '';
+  const items = record ? (record.items || [{name: record.name, sku: record.sku, qty: record.qty||1}]) : (prefill && prefill.items ? prefill.items : [{name:'', sku:'', qty:1}]);
+  items.forEach(it => addPlantRow('dispatch', it));
 
   const beforeImg = document.getElementById('dpreview_before');
   const afterImg = document.getElementById('dpreview_after');
@@ -1433,14 +1554,15 @@ function pickDispatchStatus(status){
 }
 
 async function saveDispatchRecord(){
-  const name = document.getElementById('df_name').value.trim();
   const site = document.getElementById('df_site').value.trim();
-  if(!name){
-    alert('Please enter a plant name.');
-    return;
-  }
+  const items = getPlantItemsFromModal('dispatch');
+  
   if(!site){
     alert('Please enter a destination client site.');
+    return;
+  }
+  if(items.length === 0){
+    alert('Please add at least one plant item to dispatch.');
     return;
   }
 
@@ -1459,12 +1581,13 @@ async function saveDispatchRecord(){
   const rec = {
     id: editingDispatchId || uid('dispatch'),
     trackingNo: document.getElementById('df_trackingNo').value.trim() || generateTrackingNo('DSP', dispatchRecords.length),
-    name,
-    sku: document.getElementById('df_sku').value.trim(),
-    qty: parseInt(document.getElementById('df_qty').value, 10) || 1,
-    dispatchDate: document.getElementById('df_dispatchDate').value,
     site,
     siteCode: document.getElementById('df_siteCode').value.trim(),
+    dispatchDate: document.getElementById('df_dispatchDate').value,
+    items,
+    name: items[0].name, // Backward compatibility
+    sku: items[0].sku,
+    qty: items.reduce((acc, it) => acc + (it.qty||1), 0),
     supervisor: document.getElementById('df_supervisor').value.trim(),
     supervisorPhone: document.getElementById('df_supervisorPhone').value.trim(),
     asm: document.getElementById('df_asm').value.trim(),
@@ -1521,9 +1644,11 @@ function openDispatchDetail(id){
   const trk = r.trackingNo || generateTrackingNo('DSP', 0);
   if(!r.trackingNo){ r.trackingNo = trk; persistDispatch(r); }
 
-  document.getElementById('dispatchDetailTitle').textContent = `${r.name} (Qty: ${r.qty || 1})`;
+  const items = r.items || [{name: r.name, sku: r.sku, qty: r.qty||1}];
+
+  document.getElementById('dispatchDetailTitle').textContent = `Outward Dispatch (${items.length} Plant Types)`;
   document.getElementById('dispatchDetailBody').innerHTML = `
-    <div style="background:var(--card);border:1.5px solid var(--bark-dim);border-radius:10px;padding:12px 16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+    <div class="trk-banner dsp">
       <div>
         <div style="font-size:11px;color:var(--ink-faint);text-transform:uppercase;font-weight:700;letter-spacing:0.05em;">Order / Tracking Number</div>
         <div style="font-family:'Roboto Slab',serif;font-size:18px;font-weight:700;color:var(--bark);margin-top:2px;">${esc(trk)}</div>
@@ -1539,8 +1664,6 @@ function openDispatchDetail(id){
       <span class="status-tag status-${r.status}" style="position:static;display:inline-block;transform:none;">${DISPATCH_STATUS_LABELS[r.status] || r.status}</span>
     </div>
     <div class="detail-grid">
-      <div class="dfield"><div class="l">Plant SKU</div><div class="v">${esc(r.sku) || '—'}</div></div>
-      <div class="dfield"><div class="l">Quantity Dispatched</div><div class="v"><strong>${r.qty || 1}</strong> plant(s)</div></div>
       <div class="dfield"><div class="l">Destination Site</div><div class="v"><strong>${esc(r.site) || '—'}</strong> ${r.siteCode ? '('+esc(r.siteCode)+')' : ''}</div></div>
       <div class="dfield"><div class="l">Dispatch Date</div><div class="v">${r.dispatchDate ? formatDate(r.dispatchDate) : '—'}</div></div>
       <div class="dfield"><div class="l">Site Supervisor</div><div class="v">${esc(r.supervisor) || '—'} ${r.supervisorPhone ? '<br><small>('+esc(r.supervisorPhone)+')</small>' : ''}</div></div>
@@ -1548,6 +1671,29 @@ function openDispatchDetail(id){
       <div class="dfield"><div class="l">Dispatched By</div><div class="v">${esc(r.dispatchedBy) || '—'}</div></div>
       <div class="dfield"><div class="l">Vehicle / Gate Pass</div><div class="v">${esc(r.vehicleNo) || '—'}</div></div>
     </div>
+
+    <div class="dblock">
+      <div class="l">Plants List in Order</div>
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Plant Name</th>
+            <th>SKU</th>
+            <th>Qty</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map(it => `
+            <tr>
+              <td><strong>${esc(it.name)}</strong></td>
+              <td>${esc(it.sku || '—')}</td>
+              <td><strong>${it.qty || 1}</strong></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
     ${r.notes ? `<div class="dblock"><div class="l">Notes / Remarks</div><div class="v">${esc(r.notes)}</div></div>` : ''}
     <div class="dblock">
       <div class="l">Status Timeline</div>
@@ -1628,59 +1774,60 @@ function exportToExcel(){
 
   // Sheet 1: Recovery Ward
   if(records.length > 0){
-    const recRows = records.map(r => ({
-      'Order / Tracking Number': r.trackingNo || '',
-      'Plant name': r.name || '',
-      'Plant SKU': r.sku || '',
-      'Status': STATUS_LABELS[r.status] || r.status || '',
-      'Status last updated': (r.statusHistory && r.statusHistory.length) ? r.statusHistory[r.statusHistory.length-1].date : '',
-      'Client site': r.site || '',
-      'Site code': r.siteCode || '',
-      'Date received': r.dateReceived || '',
-      'Condition on arrival': r.condition || '',
-      'Recovery action': r.action || '',
-      'Date action started': r.dateAction || '',
-      'Nursery person': r.personName || '',
-      'Employee ID': r.empId || '',
-      'Before photo attached': r.photoBefore ? 'Yes' : 'No',
-      'After photo attached': r.photoAfter ? 'Yes' : 'No',
-      'Notes': r.notes || '',
-      'Status history': (r.statusHistory || []).map(h => `${STATUS_LABELS[h.status] || h.status} (${h.date})`).join(' -> ')
-    }));
+    const recRows = [];
+    records.forEach(r => {
+      const items = r.items || [{name: r.name, sku: r.sku, qty: 1}];
+      items.forEach(it => {
+        recRows.push({
+          'Order / Tracking Number': r.trackingNo || '',
+          'Plant Name': it.name || '',
+          'Plant SKU': it.sku || '',
+          'Quantity': it.qty || 1,
+          'Status': STATUS_LABELS[r.status] || r.status || '',
+          'Client Site': r.site || '',
+          'Site Code': r.siteCode || '',
+          'Date Received': r.dateReceived || '',
+          'Condition on Arrival': r.condition || '',
+          'Recovery Action': r.action || '',
+          'Date Action Started': r.dateAction || '',
+          'Nursery Person': r.personName || '',
+          'Employee ID': r.empId || '',
+          'Notes': r.notes || ''
+        });
+      });
+    });
     const ws = XLSX.utils.json_to_sheet(recRows);
-    ws['!cols'] = [
-      {wch:22},{wch:22},{wch:12},{wch:14},{wch:16},{wch:22},{wch:10},{wch:14},
-      {wch:32},{wch:32},{wch:16},{wch:18},{wch:12},{wch:14},{wch:14},{wch:28},{wch:40}
-    ];
+    ws['!cols'] = [{wch:22},{wch:24},{wch:12},{wch:10},{wch:14},{wch:22},{wch:10},{wch:14},{wch:30},{wch:30},{wch:16},{wch:18},{wch:12},{wch:28}];
     XLSX.utils.book_append_sheet(wb, ws, 'Recovery Ward Log');
   }
 
   // Sheet 2: Outward Movement Dispatch
   if(dispatchRecords.length > 0){
-    const dispRows = dispatchRecords.map(r => ({
-      'Order / Tracking Number': r.trackingNo || '',
-      'Plant Name': r.name || '',
-      'Plant SKU': r.sku || '',
-      'Quantity Dispatched': r.qty || 1,
-      'Dispatch Date': r.dispatchDate || '',
-      'Destination Site': r.site || '',
-      'Site Code': r.siteCode || '',
-      'Site Supervisor': r.supervisor || '',
-      'Supervisor Contact/ID': r.supervisorPhone || '',
-      'Site ASM': r.asm || '',
-      'ASM Contact/ID': r.asmPhone || '',
-      'Status': DISPATCH_STATUS_LABELS[r.status] || r.status || '',
-      'Dispatched By': r.dispatchedBy || '',
-      'Vehicle/Gate Pass': r.vehicleNo || '',
-      'Dispatch Photo': r.photoBefore ? 'Yes' : 'No',
-      'Delivery Receipt Photo': r.photoAfter ? 'Yes' : 'No',
-      'Notes': r.notes || '',
-      'Status Timeline': (r.statusHistory || []).map(h => `${DISPATCH_STATUS_LABELS[h.status] || h.status} (${h.date})`).join(' -> ')
-    }));
+    const dispRows = [];
+    dispatchRecords.forEach(r => {
+      const items = r.items || [{name: r.name, sku: r.sku, qty: r.qty||1}];
+      items.forEach(it => {
+        dispRows.push({
+          'Order / Tracking Number': r.trackingNo || '',
+          'Plant Name': it.name || '',
+          'Plant SKU': it.sku || '',
+          'Quantity Dispatched': it.qty || 1,
+          'Dispatch Date': r.dispatchDate || '',
+          'Destination Site': r.site || '',
+          'Site Code': r.siteCode || '',
+          'Site Supervisor': r.supervisor || '',
+          'Supervisor Contact/ID': r.supervisorPhone || '',
+          'Site ASM': r.asm || '',
+          'ASM Contact/ID': r.asmPhone || '',
+          'Status': DISPATCH_STATUS_LABELS[r.status] || r.status || '',
+          'Dispatched By': r.dispatchedBy || '',
+          'Vehicle/Gate Pass': r.vehicleNo || '',
+          'Notes': r.notes || ''
+        });
+      });
+    });
     const wsDisp = XLSX.utils.json_to_sheet(dispRows);
-    wsDisp['!cols'] = [
-      {wch:22},{wch:22},{wch:12},{wch:10},{wch:14},{wch:22},{wch:10},{wch:18},{wch:18},{wch:18},{wch:18},{wch:14},{wch:18},{wch:18},{wch:14},{wch:14},{wch:28},{wch:40}
-    ];
+    wsDisp['!cols'] = [{wch:22},{wch:24},{wch:12},{wch:10},{wch:14},{wch:22},{wch:10},{wch:18},{wch:18},{wch:18},{wch:18},{wch:14},{wch:18},{wch:18},{wch:28}];
     XLSX.utils.book_append_sheet(wb, wsDisp, 'Outward Dispatch Log');
   }
 
