@@ -256,6 +256,34 @@
   .photo-btn:hover{background:var(--leaf-dim);}
   .ph-icon{font-style:normal;font-size:12px;}
 
+  /* Multi-photo upload widget */
+  .multi-photo-box{
+    border:1.5px dashed var(--line-strong);border-radius:8px;padding:14px;
+    background:var(--card);
+  }
+  .photo-thumbs{
+    display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;
+  }
+  .photo-thumb{
+    position:relative;width:88px;height:88px;border-radius:8px;overflow:hidden;
+    border:1px solid var(--line-strong);flex-shrink:0;
+  }
+  .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .photo-thumb .rm-btn{
+    position:absolute;top:3px;right:3px;background:rgba(42,38,32,0.72);color:#fff;
+    border:none;border-radius:50%;width:20px;height:20px;font-size:13px;line-height:18px;
+    cursor:pointer;padding:0;text-align:center;
+  }
+  .photo-thumb .rm-btn:hover{background:var(--red);}
+  .photo-empty-note{font-size:12px;color:var(--ink-faint);margin-bottom:10px;}
+
+  /* Detail view photo gallery */
+  .detail-photo-gallery{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
+  .detail-photo-gallery .gph{
+    width:110px;height:110px;border-radius:8px;overflow:hidden;background:var(--parchment-dim);
+  }
+  .detail-photo-gallery .gph img{width:100%;height:100%;object-fit:cover;display:block;}
+
   .ac-list{
     position:absolute;top:100%;left:0;right:0;z-index:30;
     background:var(--card);border:1px solid var(--line-strong);border-top:none;
@@ -468,6 +496,11 @@
         <input type="text" id="f_trackingNo" readonly style="font-family:'Roboto Slab',serif;font-weight:700;color:var(--moss);background:var(--parchment-dim);">
       </div>
 
+      <div class="field">
+        <label>DC Number</label>
+        <input type="text" id="f_dcNumber" placeholder="e.g. DC-2026-00123">
+      </div>
+
       <div class="row2">
         <div class="field">
           <label>Date received *</label>
@@ -522,27 +555,14 @@
 
       <div class="field">
         <label>Photos</label>
-        <div class="photo-inputs">
-          <div class="photo-slot">
-            <div class="lbl">Before treatment</div>
-            <img id="preview_before" style="display:none;">
-            <div class="photo-btn-row">
-              <button type="button" class="photo-btn" onclick="document.getElementById('f_photoBefore_cam').click()"><i class="ph-icon">&#128247;</i> Take photo</button>
-              <button type="button" class="photo-btn" onclick="document.getElementById('f_photoBefore_file').click()">Upload file</button>
-            </div>
-            <input type="file" accept="image/*" capture="environment" id="f_photoBefore_cam" style="display:none;" onchange="previewPhoto(this,'preview_before')">
-            <input type="file" accept="image/*" id="f_photoBefore_file" style="display:none;" onchange="previewPhoto(this,'preview_before')">
+        <div class="multi-photo-box">
+          <div class="photo-thumbs" id="f_photoThumbs"></div>
+          <div class="photo-btn-row">
+            <button type="button" class="photo-btn" onclick="document.getElementById('f_photos_cam').click()"><i class="ph-icon">&#128247;</i> Take photo</button>
+            <button type="button" class="photo-btn" onclick="document.getElementById('f_photos_file').click()">Upload files</button>
           </div>
-          <div class="photo-slot">
-            <div class="lbl">After treatment</div>
-            <img id="preview_after" style="display:none;">
-            <div class="photo-btn-row">
-              <button type="button" class="photo-btn" onclick="document.getElementById('f_photoAfter_cam').click()"><i class="ph-icon">&#128247;</i> Take photo</button>
-              <button type="button" class="photo-btn" onclick="document.getElementById('f_photoAfter_file').click()">Upload file</button>
-            </div>
-            <input type="file" accept="image/*" capture="environment" id="f_photoAfter_cam" style="display:none;" onchange="previewPhoto(this,'preview_after')">
-            <input type="file" accept="image/*" id="f_photoAfter_file" style="display:none;" onchange="previewPhoto(this,'preview_after')">
-          </div>
+          <input type="file" accept="image/*" capture="environment" id="f_photos_cam" style="display:none;" onchange="addPhotos(this,'recovery')">
+          <input type="file" accept="image/*" id="f_photos_file" multiple style="display:none;" onchange="addPhotos(this,'recovery')">
         </div>
       </div>
 
@@ -599,6 +619,11 @@
       <div class="field">
         <label>Order / Tracking Number (Auto-Generated)</label>
         <input type="text" id="df_trackingNo" readonly style="font-family:'Roboto Slab',serif;font-weight:700;color:var(--bark);background:var(--amber-dim);">
+      </div>
+
+      <div class="field">
+        <label>DC Number</label>
+        <input type="text" id="df_dcNumber" placeholder="e.g. DC-2026-00123">
       </div>
 
       <div class="row2">
@@ -662,27 +687,14 @@
 
       <div class="field">
         <label>Photos</label>
-        <div class="photo-inputs">
-          <div class="photo-slot">
-            <div class="lbl">Dispatch / Gate Pass Photo</div>
-            <img id="dpreview_before" style="display:none;">
-            <div class="photo-btn-row">
-              <button type="button" class="photo-btn" onclick="document.getElementById('df_photoBefore_cam').click()"><i class="ph-icon">&#128247;</i> Camera</button>
-              <button type="button" class="photo-btn" onclick="document.getElementById('df_photoBefore_file').click()">Upload file</button>
-            </div>
-            <input type="file" accept="image/*" capture="environment" id="df_photoBefore_cam" style="display:none;" onchange="previewPhoto(this,'dpreview_before')">
-            <input type="file" accept="image/*" id="df_photoBefore_file" style="display:none;" onchange="previewPhoto(this,'dpreview_before')">
+        <div class="multi-photo-box">
+          <div class="photo-thumbs" id="df_photoThumbs"></div>
+          <div class="photo-btn-row">
+            <button type="button" class="photo-btn" onclick="document.getElementById('df_photos_cam').click()"><i class="ph-icon">&#128247;</i> Camera</button>
+            <button type="button" class="photo-btn" onclick="document.getElementById('df_photos_file').click()">Upload files</button>
           </div>
-          <div class="photo-slot">
-            <div class="lbl">Delivery Receipt Photo</div>
-            <img id="dpreview_after" style="display:none;">
-            <div class="photo-btn-row">
-              <button type="button" class="photo-btn" onclick="document.getElementById('df_photoAfter_cam').click()"><i class="ph-icon">&#128247;</i> Camera</button>
-              <button type="button" class="photo-btn" onclick="document.getElementById('df_photoAfter_file').click()">Upload file</button>
-            </div>
-            <input type="file" accept="image/*" capture="environment" id="df_photoAfter_cam" style="display:none;" onchange="previewPhoto(this,'dpreview_after')">
-            <input type="file" accept="image/*" id="df_photoAfter_file" style="display:none;" onchange="previewPhoto(this,'dpreview_after')">
-          </div>
+          <input type="file" accept="image/*" capture="environment" id="df_photos_cam" style="display:none;" onchange="addPhotos(this,'dispatch')">
+          <input type="file" accept="image/*" id="df_photos_file" multiple style="display:none;" onchange="addPhotos(this,'dispatch')">
         </div>
       </div>
 
@@ -775,6 +787,8 @@ let currentStatus = 'intake';
 let currentDispatchStatus = 'dispatched';
 let detailViewId = null;
 let detailDispatchViewId = null;
+let currentPhotos = [];
+let currentDispatchPhotos = [];
 
 function uid(prefix){
   return prefix + '_' + Date.now() + '_' + Math.random().toString(36).substr(2,6);
@@ -1270,6 +1284,7 @@ function openModal(record){
   const autoTrk = record ? (record.trackingNo || generateTrackingNo('REC', records.length)) : generateTrackingNo('REC', records.length);
   document.getElementById('f_trackingNo').value = autoTrk;
 
+  document.getElementById('f_dcNumber').value = record ? (record.dcNumber || '') : '';
   document.getElementById('f_dateReceived').value = record ? record.dateReceived : new Date().toISOString().slice(0,10);
   document.getElementById('f_site').value = record ? record.site : '';
   document.getElementById('f_siteCode').value = record ? (record.siteCode || '') : '';
@@ -1286,17 +1301,10 @@ function openModal(record){
   const items = record ? (record.items || [{name: record.name, sku: record.sku, qty: 1}]) : [{name:'', sku:'', qty:1}];
   items.forEach(it => addPlantRow('recovery', it));
 
-  const beforeImg = document.getElementById('preview_before');
-  const afterImg = document.getElementById('preview_after');
-  if(record && record.photoBefore){ beforeImg.src = record.photoBefore; beforeImg.style.display='block'; }
-  else { beforeImg.style.display='none'; }
-  if(record && record.photoAfter){ afterImg.src = record.photoAfter; afterImg.style.display='block'; }
-  else { afterImg.style.display='none'; }
-
-  document.getElementById('f_photoBefore_cam').value = '';
-  document.getElementById('f_photoBefore_file').value = '';
-  document.getElementById('f_photoAfter_cam').value = '';
-  document.getElementById('f_photoAfter_file').value = '';
+  currentPhotos = record ? (record.photos && record.photos.length ? record.photos.slice() : [record.photoBefore, record.photoAfter].filter(Boolean)) : [];
+  renderPhotoThumbs('recovery');
+  document.getElementById('f_photos_cam').value = '';
+  document.getElementById('f_photos_file').value = '';
 
   pickStatus(record ? record.status : 'intake');
   document.getElementById('overlay').classList.add('open');
@@ -1326,9 +1334,6 @@ async function saveRecord(){
     return;
   }
 
-  const beforeImg = document.getElementById('preview_before');
-  const afterImg = document.getElementById('preview_after');
-
   const prior = editingId ? records.find(r => r.id === editingId) : null;
   const todayISO = new Date().toISOString().slice(0,10);
   let statusHistory = prior && prior.statusHistory ? prior.statusHistory.slice() : [];
@@ -1341,6 +1346,7 @@ async function saveRecord(){
   const rec = {
     id: editingId || uid('plant'),
     trackingNo: document.getElementById('f_trackingNo').value.trim() || generateTrackingNo('REC', records.length),
+    dcNumber: document.getElementById('f_dcNumber').value.trim(),
     site,
     siteCode: document.getElementById('f_siteCode').value.trim(),
     dateReceived: document.getElementById('f_dateReceived').value,
@@ -1355,8 +1361,9 @@ async function saveRecord(){
     notes: document.getElementById('f_notes').value.trim(),
     status: currentStatus,
     statusHistory,
-    photoBefore: beforeImg.style.display === 'block' ? beforeImg.src : null,
-    photoAfter: afterImg.style.display === 'block' ? afterImg.src : null,
+    photos: currentPhotos.slice(),
+    photoBefore: currentPhotos[0] || null,
+    photoAfter: currentPhotos[1] || null,
     createdAt: prior ? (prior.createdAt || Date.now()) : Date.now()
   };
 
@@ -1422,14 +1429,14 @@ function openDetail(id){
       <button class="trk-copy-btn" onclick="copyTrackingNo('${escJs(trk)}')">📋 Copy Order #</button>
     </div>
 
-    <div class="detail-photos">
-      <div class="ph">${r.photoBefore ? `<img src="${r.photoBefore}"><span class="cap">Before</span>` : `<span class="noimg">No before photo</span>`}</div>
-      <div class="ph">${r.photoAfter ? `<img src="${r.photoAfter}"><span class="cap">After</span>` : `<span class="noimg">No after photo</span>`}</div>
+    <div class="detail-photo-gallery">
+      ${(r.photos && r.photos.length ? r.photos : [r.photoBefore, r.photoAfter].filter(Boolean)).map(p => `<div class="gph"><img src="${p}"></div>`).join('') || '<span class="noimg">No photos attached</span>'}
     </div>
     <div style="margin-bottom:16px;">
       <span class="status-tag status-${r.status}" style="position:static;display:inline-block;transform:none;">${STATUS_LABELS[r.status] || r.status}</span>
     </div>
     <div class="detail-grid">
+      <div class="dfield"><div class="l">DC Number</div><div class="v">${esc(r.dcNumber) || '—'}</div></div>
       <div class="dfield"><div class="l">Client site</div><div class="v"><strong>${esc(r.site) || '—'}</strong> ${r.siteCode ? ' ('+esc(r.siteCode)+')' : ''}</div></div>
       <div class="dfield"><div class="l">Date received</div><div class="v">${r.dateReceived ? formatDate(r.dateReceived) : '—'}</div></div>
       <div class="dfield"><div class="l">Action started</div><div class="v">${r.dateAction ? formatDate(r.dateAction) : '—'}</div></div>
@@ -1509,6 +1516,7 @@ function openDispatchModal(prefill){
   const autoTrk = record ? (record.trackingNo || generateTrackingNo('DSP', dispatchRecords.length)) : generateTrackingNo('DSP', dispatchRecords.length);
   document.getElementById('df_trackingNo').value = autoTrk;
 
+  document.getElementById('df_dcNumber').value = record ? (record.dcNumber || '') : (prefill ? prefill.dcNumber || '' : '');
   document.getElementById('df_dispatchDate').value = record ? record.dispatchDate : new Date().toISOString().slice(0,10);
   document.getElementById('df_site').value = record ? record.site : (prefill ? prefill.site || '' : '');
   document.getElementById('df_siteCode').value = record ? (record.siteCode || '') : (prefill ? prefill.siteCode || '' : '');
@@ -1526,17 +1534,10 @@ function openDispatchModal(prefill){
   const items = record ? (record.items || [{name: record.name, sku: record.sku, qty: record.qty||1}]) : (prefill && prefill.items ? prefill.items : [{name:'', sku:'', qty:1}]);
   items.forEach(it => addPlantRow('dispatch', it));
 
-  const beforeImg = document.getElementById('dpreview_before');
-  const afterImg = document.getElementById('dpreview_after');
-  if(record && record.photoBefore){ beforeImg.src = record.photoBefore; beforeImg.style.display='block'; }
-  else { beforeImg.style.display='none'; }
-  if(record && record.photoAfter){ afterImg.src = record.photoAfter; afterImg.style.display='block'; }
-  else { afterImg.style.display='none'; }
-
-  document.getElementById('df_photoBefore_cam').value = '';
-  document.getElementById('df_photoBefore_file').value = '';
-  document.getElementById('df_photoAfter_cam').value = '';
-  document.getElementById('df_photoAfter_file').value = '';
+  currentDispatchPhotos = record ? (record.photos && record.photos.length ? record.photos.slice() : [record.photoBefore, record.photoAfter].filter(Boolean)) : [];
+  renderPhotoThumbs('dispatch');
+  document.getElementById('df_photos_cam').value = '';
+  document.getElementById('df_photos_file').value = '';
 
   pickDispatchStatus(record ? record.status : 'dispatched');
   document.getElementById('dispatchOverlay').classList.add('open');
@@ -1566,9 +1567,6 @@ async function saveDispatchRecord(){
     return;
   }
 
-  const beforeImg = document.getElementById('dpreview_before');
-  const afterImg = document.getElementById('dpreview_after');
-
   const prior = editingDispatchId ? dispatchRecords.find(r => r.id === editingDispatchId) : null;
   const todayISO = new Date().toISOString().slice(0,10);
   let statusHistory = prior && prior.statusHistory ? prior.statusHistory.slice() : [];
@@ -1581,6 +1579,7 @@ async function saveDispatchRecord(){
   const rec = {
     id: editingDispatchId || uid('dispatch'),
     trackingNo: document.getElementById('df_trackingNo').value.trim() || generateTrackingNo('DSP', dispatchRecords.length),
+    dcNumber: document.getElementById('df_dcNumber').value.trim(),
     site,
     siteCode: document.getElementById('df_siteCode').value.trim(),
     dispatchDate: document.getElementById('df_dispatchDate').value,
@@ -1597,8 +1596,9 @@ async function saveDispatchRecord(){
     notes: document.getElementById('df_notes').value.trim(),
     status: currentDispatchStatus,
     statusHistory,
-    photoBefore: beforeImg.style.display === 'block' ? beforeImg.src : null,
-    photoAfter: afterImg.style.display === 'block' ? afterImg.src : null,
+    photos: currentDispatchPhotos.slice(),
+    photoBefore: currentDispatchPhotos[0] || null,
+    photoAfter: currentDispatchPhotos[1] || null,
     createdAt: prior ? (prior.createdAt || Date.now()) : Date.now()
   };
 
@@ -1656,14 +1656,14 @@ function openDispatchDetail(id){
       <button class="trk-copy-btn" onclick="copyTrackingNo('${escJs(trk)}')">📋 Copy Order #</button>
     </div>
 
-    <div class="detail-photos">
-      <div class="ph">${r.photoBefore ? `<img src="${r.photoBefore}"><span class="cap">Dispatch Photo</span>` : `<span class="noimg">No dispatch photo</span>`}</div>
-      <div class="ph">${r.photoAfter ? `<img src="${r.photoAfter}"><span class="cap">Delivery Receipt</span>` : `<span class="noimg">No receipt photo</span>`}</div>
+    <div class="detail-photo-gallery">
+      ${(r.photos && r.photos.length ? r.photos : [r.photoBefore, r.photoAfter].filter(Boolean)).map(p => `<div class="gph"><img src="${p}"></div>`).join('') || '<span class="noimg">No photos attached</span>'}
     </div>
     <div style="margin-bottom:16px;">
       <span class="status-tag status-${r.status}" style="position:static;display:inline-block;transform:none;">${DISPATCH_STATUS_LABELS[r.status] || r.status}</span>
     </div>
     <div class="detail-grid">
+      <div class="dfield"><div class="l">DC Number</div><div class="v">${esc(r.dcNumber) || '—'}</div></div>
       <div class="dfield"><div class="l">Destination Site</div><div class="v"><strong>${esc(r.site) || '—'}</strong> ${r.siteCode ? '('+esc(r.siteCode)+')' : ''}</div></div>
       <div class="dfield"><div class="l">Dispatch Date</div><div class="v">${r.dispatchDate ? formatDate(r.dispatchDate) : '—'}</div></div>
       <div class="dfield"><div class="l">Site Supervisor</div><div class="v">${esc(r.supervisor) || '—'} ${r.supervisorPhone ? '<br><small>('+esc(r.supervisorPhone)+')</small>' : ''}</div></div>
@@ -1719,6 +1719,53 @@ function editFromDispatchDetail(){
   const r = dispatchRecords.find(x => x.id === detailDispatchViewId);
   closeDispatchDetail();
   if(r) openDispatchModal(r);
+}
+
+/* Multi-photo upload / remove */
+function addPhotos(input, type){
+  const files = Array.from(input.files || []);
+  if(files.length === 0) return;
+  const targetArr = type === 'dispatch' ? currentDispatchPhotos : currentPhotos;
+  let pending = files.length;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      compressImage(e.target.result, 900, 0.72).then(compressed => {
+        targetArr.push(compressed);
+      }).catch(() => {
+        targetArr.push(e.target.result);
+      }).finally(() => {
+        pending--;
+        if(pending === 0){
+          renderPhotoThumbs(type);
+        }
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function removePhoto(type, idx){
+  const targetArr = type === 'dispatch' ? currentDispatchPhotos : currentPhotos;
+  targetArr.splice(idx, 1);
+  renderPhotoThumbs(type);
+}
+
+function renderPhotoThumbs(type){
+  const arr = type === 'dispatch' ? currentDispatchPhotos : currentPhotos;
+  const container = document.getElementById(type === 'dispatch' ? 'df_photoThumbs' : 'f_photoThumbs');
+  if(!container) return;
+  if(arr.length === 0){
+    container.innerHTML = '<div class="photo-empty-note">No photos added yet.</div>';
+    return;
+  }
+  container.innerHTML = arr.map((src, i) => `
+    <div class="photo-thumb">
+      <img src="${src}">
+      <button type="button" class="rm-btn" onclick="removePhoto('${type}',${i})" title="Remove photo">&times;</button>
+    </div>
+  `).join('');
 }
 
 function previewPhoto(input, imgId){
@@ -1780,6 +1827,7 @@ function exportToExcel(){
       items.forEach(it => {
         recRows.push({
           'Order / Tracking Number': r.trackingNo || '',
+          'DC Number': r.dcNumber || '',
           'Plant Name': it.name || '',
           'Plant SKU': it.sku || '',
           'Quantity': it.qty || 1,
@@ -1797,7 +1845,7 @@ function exportToExcel(){
       });
     });
     const ws = XLSX.utils.json_to_sheet(recRows);
-    ws['!cols'] = [{wch:22},{wch:24},{wch:12},{wch:10},{wch:14},{wch:22},{wch:10},{wch:14},{wch:30},{wch:30},{wch:16},{wch:18},{wch:12},{wch:28}];
+    ws['!cols'] = [{wch:22},{wch:16},{wch:24},{wch:12},{wch:10},{wch:14},{wch:22},{wch:10},{wch:14},{wch:30},{wch:30},{wch:16},{wch:18},{wch:12},{wch:28}];
     XLSX.utils.book_append_sheet(wb, ws, 'Recovery Ward Log');
   }
 
@@ -1809,6 +1857,7 @@ function exportToExcel(){
       items.forEach(it => {
         dispRows.push({
           'Order / Tracking Number': r.trackingNo || '',
+          'DC Number': r.dcNumber || '',
           'Plant Name': it.name || '',
           'Plant SKU': it.sku || '',
           'Quantity Dispatched': it.qty || 1,
@@ -1827,7 +1876,7 @@ function exportToExcel(){
       });
     });
     const wsDisp = XLSX.utils.json_to_sheet(dispRows);
-    wsDisp['!cols'] = [{wch:22},{wch:24},{wch:12},{wch:10},{wch:14},{wch:22},{wch:10},{wch:18},{wch:18},{wch:18},{wch:18},{wch:14},{wch:18},{wch:18},{wch:28}];
+    wsDisp['!cols'] = [{wch:22},{wch:16},{wch:24},{wch:12},{wch:10},{wch:14},{wch:22},{wch:10},{wch:18},{wch:18},{wch:18},{wch:18},{wch:14},{wch:18},{wch:18},{wch:28}];
     XLSX.utils.book_append_sheet(wb, wsDisp, 'Outward Dispatch Log');
   }
 
